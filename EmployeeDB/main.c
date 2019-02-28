@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <C:\Users\Naik\Desktop\c_assignment\EmployeeDB\sqlite3.h>
 
 static int callback(void* data, int argc, char** argv, char** azColName)
@@ -11,6 +12,28 @@ static int callback(void* data, int argc, char** argv, char** azColName)
     }
 
     printf("\n");
+    return 0;
+}
+
+int deleteRecord(sqlite3 * db, char * msg)
+{
+    int input;
+    scanf("%d", &input);
+    printf("%d", input);
+    char * buffer;
+    itoa(input, buffer, 10);
+    printf("%s", buffer);
+	char sql[] = "DELETE FROM PERSON WHERE ID = ";
+	strcat(sql,buffer);
+	strcat(sql,";");
+	int exit;
+	exit = sqlite3_exec(db, sql, NULL, 0, &msg);
+	if (exit != SQLITE_OK) {
+        fprintf(stderr, "Error DELETE");
+		sqlite3_free(msg);
+	}
+	else
+        fprintf(stdout, "Record deleted Successfully!");
     return 0;
 }
 
@@ -42,10 +65,7 @@ int main(int argc, char** argv)
 
 	sqlite3_exec(DB, query, callback, NULL, NULL);
 
-	char * sql_insert = "INSERT INTO PERSON VALUES(1, 'STEVE', 'GATES', 30, 'PALO ALTO', 1000.0);"
-			"INSERT INTO PERSON VALUES(2, 'BILL', 'ALLEN', 20, 'SEATTLE', 300.22);"
-			"INSERT INTO PERSON VALUES(3, 'PAUL', 'JOBS', 24, 'SEATTLE', 9900.0);"
-			"INSERT INTO PERSON VALUES(4, 'ASHUTOSH', 'NAIK', 18, 'MUMBAI', 10000.0);";
+	char * sql_insert ="INSERT INTO PERSON VALUES(4, 'ASHUTOSH', 'NAIK', 18, 'MUMBAI', 10000.0);";
 
 	exit = sqlite3_exec(DB, sql_insert, NULL, 0, &messaggeError);
 	if (exit != SQLITE_OK) {
@@ -58,19 +78,40 @@ int main(int argc, char** argv)
 	fprintf (stdout, "TABLE AFTER INSERT");
 
 	sqlite3_exec(DB, query, callback, NULL, NULL);
-
-	sql = "DELETE FROM PERSON WHERE ID = 2;";
-	exit = sqlite3_exec(DB, sql, NULL, 0, &messaggeError);
-	if (exit != SQLITE_OK) {
-        fprintf(stderr, "Error DELETE");
-		sqlite3_free(messaggeError);
-	}
-	else
-        fprintf(stdout, "Record deleted Successfully!");
-
-	fprintf(stdout, "TABLE AFTER DELETE OF ELEMENT");
+    int input;
+    deleteRecord(DB, messaggeError);
+//	sql = "DELETE FROM PERSON WHERE ID = 2;";
+//	exit = sqlite3_exec(DB, sql, NULL, 0, &messaggeError);
+//	if (exit != SQLITE_OK) {
+//        fprintf(stderr, "Error DELETE");
+//		sqlite3_free(messaggeError);
+//	}
+//	else
+//        fprintf(stdout, "Record deleted Successfully!");
+//
+//	fprintf(stdout, "TABLE AFTER DELETE OF ELEMENT");
 	sqlite3_exec(DB, query, callback, NULL, NULL);
 
 	sqlite3_close(DB);
 	return (0);
 }
+
+
+
+
+
+
+
+//int deleteRecord(sqlite3 * db, char * msg)
+//{
+//	char sql[] = "DELETE FROM PERSON WHERE ID = 3;";
+//	int exit;
+//	exit = sqlite3_exec(db, sql, NULL, 0, &msg);
+//	if (exit != SQLITE_OK) {
+//        fprintf(stderr, "Error DELETE");
+//		sqlite3_free(msg);
+//	}
+//	else
+//        fprintf(stdout, "Record deleted Successfully!");
+//    return 0;
+//}
