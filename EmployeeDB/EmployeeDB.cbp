@@ -38,6 +38,10 @@
 			<Add library="libEmployeeDB.a" />
 			<Add directory="C:/Users/Naik/Desktop/c_assignment/EmployeeDB/" />
 		</Linker>
+		<Unit filename="employee.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="employee.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

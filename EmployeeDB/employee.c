@@ -23,3 +23,17 @@ int deleteRecord(sqlite3 * db, char * msg)
         fprintf(stdout, "Record deleted Successfully!");
     return 0;
 }
+
+int createRecord(sqlite3 * db, char * msg)
+{
+    int exit;
+    char * sql_insert ="INSERT INTO PERSON VALUES(3, 'ASHUTOSH', 'NAIK', 18, 'MUMBAI', 10000.0);";
+
+	exit = sqlite3_exec(db, sql_insert, NULL, 0, &msg);
+	if (exit != SQLITE_OK) {
+		fprintf(stderr, "Error Insert");
+		sqlite3_free(msg);
+	}
+	else
+        fprintf(stderr, "Records created Successfully!");
+}
