@@ -3,27 +3,42 @@
 #include <C:\Users\Naik\Desktop\c_assignment\EmployeeDB\sqlite3.h>
 #include "employee.h"
 
-static int callback(void* data, int argc, char** argv, char** azColName)
+static int callback2(void* data, int argc, char** argv, char** azColName)
 {
-    int i;
-    fprintf(stderr, "%s: ", (const char*)data);
-
-    for (i = 0; i < argc; i++) {
-        printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-    }
-
-    printf("\n");
+    id = atoi(argv[0]);
     return 0;
 }
-
 
 int main(int argc, char** argv)
 {
 	sqlite3* DB;
+	int input;
 	char* messaggeError;
 	int exit = sqlite3_open("employee2.db", &DB);
+	sqlite3_exec(DB, "SELECT MAX(ID) FROM PERSON;", callback2, NULL, NULL); //To get Latest ID
+	while(1)
+    {
+        printf("Press 1 to display records\nPress 2 to add employee\nPress 3 to delete record\nPress 0 to exit\n");
+        scanf("%d",&input);
+        switch(input)
+        {
+            case 1: displayRecord(DB, messaggeError);
+                break;
 
-	char * sql = "CREATE TABLE PERSON("
+            case 2: createRecord(DB, messaggeError);
+                break;
+
+            case 3: deleteRecord(DB, messaggeError);
+                break;
+
+            default : break;
+        }
+        if(input==0)
+            break;
+    }
+	return (0);
+}
+	/*char * sql = "CREATE TABLE PERSON("
                       "ID INT PRIMARY KEY     NOT NULL, "
                       "NAME           TEXT    NOT NULL, "
                       "SURNAME          TEXT     NOT NULL, "
@@ -37,23 +52,4 @@ int main(int argc, char** argv)
         fprintf(stderr, "Error Creating TABLE!");
         sqlite3_free(messaggeError);
     }
-    else fprintf(stdout, "Table Created Successfully!");
-
-	char* query = "SELECT * FROM PERSON;";
-
-	fprintf(stdout, "TABLE BEFORE INSERT");
-
-	sqlite3_exec(DB, query, callback, NULL, NULL);
-
-	createRecord(DB, messaggeError);
-
-	fprintf (stdout, "TABLE AFTER INSERT");
-
-	sqlite3_exec(DB, query, callback, NULL, NULL);
-    int input;
-    deleteRecord(DB, messaggeError);
-	sqlite3_exec(DB, query, callback, NULL, NULL);
-
-	sqlite3_close(DB);
-	return (0);
-}
+    else fprintf(stdout, "Table Created Successfully!");*/
