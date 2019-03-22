@@ -4,8 +4,11 @@ extern int id;
 int deleteRecord(sqlite3 * db, char * msg);
 int createRecord(sqlite3 * db, char * msg);
 int displayRecord(sqlite3 * db, char * msg);
+int searchName(sqlite3 * db, char * msg);
+int searchId(sqlite3 * db, char * msg);
 void validSalary(float * salary);
-//void valid_pf(float * salary, float* pf)
+void valid_pf(float * salary, float* pf);
+void valid_allowance(float * allowance);
 float tax(float * salary);
 //static int callback(void* data, int argc, char** argv, char** azColName);
 

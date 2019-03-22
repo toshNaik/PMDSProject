@@ -86,9 +86,9 @@ int createRecord(sqlite3 * db, char * msg)
     buffer_net = (char*)malloc(10);
 
     char* name;
-    name = (char*)malloc(15);
-    char* surname;
-	surname = (char*)malloc(15);
+    name = (char*)malloc(30);
+    //char* surname;
+	//surname = (char*)malloc(15);
 	char* address;
 	address = (char*)malloc(15);
 
@@ -97,9 +97,9 @@ int createRecord(sqlite3 * db, char * msg)
 	printf("Enter name: ");
 	scanf("%[^\n]s", name);
 	fflush(stdin);
-	printf("Enter surname: ");
-	scanf("%[^\n]s", surname);
-	fflush(stdin);
+	//printf("Enter surname: ");
+	//scanf("%[^\n]s", surname);
+	//fflush(stdin);
 	printf("Enter address: ");
 	scanf("%[^\n]s", address);
 	fflush(stdin);
@@ -133,8 +133,8 @@ int createRecord(sqlite3 * db, char * msg)
     sprintf(buffer_net, "%0.1f", net);
 
     char* sql_query;
-    sql_query = (char*)malloc(strlen(buffer_tax)+strlen(buffer_gross)+strlen(buffer_travel_all)+strlen(buffer_med_all)+strlen(buffer_pf)+strlen(buffer_tax)+strlen(buffer_id)+strlen(name)+strlen(surname)+strlen(address)+strlen(buffer_age)+strlen(buffer_salary)+strlen(sql_insert)+20);
-    sprintf(sql_query,"%s%s,'%s','%s',%s,'%s',%s,%s,%s,%s,%s,%s,%s);",sql_insert,buffer_id,name,surname,buffer_age,address,buffer_salary,buffer_pf,buffer_med_all,buffer_travel_all,buffer_tax,buffer_gross,buffer_net);
+    sql_query = (char*)malloc(strlen(buffer_tax)+strlen(buffer_gross)+strlen(buffer_travel_all)+strlen(buffer_med_all)+strlen(buffer_pf)+strlen(buffer_tax)+strlen(buffer_id)+strlen(name)+strlen(address)+strlen(buffer_age)+strlen(buffer_salary)+strlen(sql_insert)+20);
+    sprintf(sql_query,"%s%s,'%s',%s,'%s',%s,%s,%s,%s,%s,%s,%s);",sql_insert,buffer_id,name,buffer_age,address,buffer_salary,buffer_pf,buffer_med_all,buffer_travel_all,buffer_tax,buffer_gross,buffer_net);
 	int exit;
 	exit = sqlite3_exec(db, sql_query, NULL, 0, &msg);
 	if (exit != SQLITE_OK) {
@@ -178,10 +178,42 @@ void valid_allowance(float * allowance)
 
 float tax(float * salary)
 {
-    if(*salary<=99999)
-        return (0.1*(*salary));
-    else if(*salary>=100000&&*salary<=499999)
-        return(0.2*(*salary));
+    if(*salary<=41666)
+        return (0.05*(*salary));
+    else if(*salary>=41667&&*salary<=83333)
+        return(0.2*(*salary-41666)+1042);
     else
-        return(0.3*(*salary));
+        return(0.3*(*salary-83334)+9375);
+}
+
+int searchName(sqlite3 * db, char * msg)
+{
+    char* sql = "SELECT * FROM PERSON WHERE NAME LIKE '%";
+	char* query;
+	char* name;
+	name = (char*)malloc(30);
+	printf("Enter name: ");
+	fflush(stdin);               //Select * From PERSON where NAME like '%NAIK%';
+	scanf("%[^\n]s", name);
+	query = (char*)malloc(strlen(sql)+strlen(name)+6);
+	sprintf(query, "%s%s%%';",sql, name);
+	sqlite3_exec(db, query, callback, NULL, NULL);
+	return 0;
+}
+
+int searchId(sqlite3 * db, char * msg)
+{
+    char* sql = "SELECT * FROM PERSON WHERE ID LIKE '";
+	char* query;
+	int id;
+	char* buffer;
+	buffer = (char*)malloc(4);
+	printf("Enter id: ");
+	fflush(stdin);               //Select * From PERSON where NAME like '%NAIK%';
+	scanf("%d", &id);
+	sprintf(buffer, "%d", id);
+	query = (char*)malloc(strlen(sql)+strlen(buffer)+4);
+	sprintf(query, "%s%s';",sql, buffer);
+	sqlite3_exec(db, query, callback, NULL, NULL);
+	return 0;
 }
