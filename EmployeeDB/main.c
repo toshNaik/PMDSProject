@@ -15,6 +15,27 @@ int main(int argc, char** argv)
 	int input;
 	char* messaggeError;
 	int exit = sqlite3_open("employee2.db", &DB);
+	/*char * sql = "CREATE TABLE PERSON("
+                      "ID INT PRIMARY KEY      NOT NULL, "
+                      "NAME           TEXT     NOT NULL, "
+                      "SURNAME        TEXT     NOT NULL, "
+                      "AGE            INT      NOT NULL, "
+                      "ADDRESS        CHAR(50), "
+                      "SALARY         REAL     NOT NULL,"
+                      "PF             REAL     NOT NULL,"
+                      "MEDICAL ALL    REAL     NOT NULL,"
+                      "TRAVEL ALL     REAL     NOT NULL,"
+                      "TAX            REAL     NOT NULL,"
+                      "GROSS          REAL     NOT NULL,"
+                      "NET            REAL     NOT NULL);";
+
+    exit = sqlite3_exec(DB, sql, NULL, 0, &messaggeError);
+
+    if (exit != SQLITE_OK) {
+        fprintf(stderr, "Error Creating TABLE!");
+        sqlite3_free(messaggeError);
+    }
+    else fprintf(stdout, "Table Created Successfully!");*/
 	sqlite3_exec(DB, "SELECT MAX(ID) FROM PERSON;", callback2, NULL, NULL); //To get Latest ID
 	while(1)
     {
