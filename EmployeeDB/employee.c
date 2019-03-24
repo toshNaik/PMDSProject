@@ -61,6 +61,10 @@ int createRecord(sqlite3 * db, char * msg)
     char* buffer_salary;
     buffer_salary = (char*)malloc(10);
 
+    int leave = 0;
+    char* buffer_leave;
+    buffer_leave = (char*)malloc(3);
+
     float pf;
     char* buffer_pf;
     buffer_pf = (char*)malloc(8);
@@ -87,8 +91,7 @@ int createRecord(sqlite3 * db, char * msg)
 
     char* name;
     name = (char*)malloc(30);
-    //char* surname;
-	//surname = (char*)malloc(15);
+
 	char* address;
 	address = (char*)malloc(15);
 
@@ -97,9 +100,7 @@ int createRecord(sqlite3 * db, char * msg)
 	printf("Enter name: ");
 	scanf("%[^\n]s", name);
 	fflush(stdin);
-	//printf("Enter surname: ");
-	//scanf("%[^\n]s", surname);
-	//fflush(stdin);
+
 	printf("Enter address: ");
 	scanf("%[^\n]s", address);
 	fflush(stdin);
@@ -119,9 +120,8 @@ int createRecord(sqlite3 * db, char * msg)
     printf("Enter Travel Allowance: ");
     scanf("%f", &travel_all);
     valid_allowance(&travel_all);
-
     gross = salary + med_all + travel_all + pf;
-    net = gross - salary_tax;
+    net = gross - salary_tax - (travel_all/12);
 
     sprintf(buffer_age, "%d", age);
     sprintf(buffer_salary, "%0.1f", salary);
@@ -129,12 +129,13 @@ int createRecord(sqlite3 * db, char * msg)
     sprintf(buffer_pf, "%0.1f", pf);
     sprintf(buffer_med_all, "%0.1f", med_all);
     sprintf(buffer_travel_all, "%0.1f", travel_all);
+    sprintf(buffer_leave, "%d", leave);
     sprintf(buffer_gross, "%0.1f", gross);
     sprintf(buffer_net, "%0.1f", net);
 
     char* sql_query;
-    sql_query = (char*)malloc(strlen(buffer_tax)+strlen(buffer_gross)+strlen(buffer_travel_all)+strlen(buffer_med_all)+strlen(buffer_pf)+strlen(buffer_tax)+strlen(buffer_id)+strlen(name)+strlen(address)+strlen(buffer_age)+strlen(buffer_salary)+strlen(sql_insert)+20);
-    sprintf(sql_query,"%s%s,'%s',%s,'%s',%s,%s,%s,%s,%s,%s,%s);",sql_insert,buffer_id,name,buffer_age,address,buffer_salary,buffer_pf,buffer_med_all,buffer_travel_all,buffer_tax,buffer_gross,buffer_net);
+    sql_query = (char*)malloc(strlen(buffer_leave)+strlen(buffer_tax)+strlen(buffer_gross)+strlen(buffer_travel_all)+strlen(buffer_med_all)+strlen(buffer_pf)+strlen(buffer_tax)+strlen(buffer_id)+strlen(name)+strlen(address)+strlen(buffer_age)+strlen(buffer_salary)+strlen(sql_insert)+20);
+    sprintf(sql_query,"%s%s,'%s',%s,'%s',%s,%s,%s,%s,%s,%s,%s,%s);",sql_insert,buffer_id,name,buffer_age,address,buffer_salary,buffer_pf,buffer_med_all,buffer_travel_all,buffer_leave,buffer_tax,buffer_gross,buffer_net);
 	int exit;
 	exit = sqlite3_exec(db, sql_query, NULL, 0, &msg);
 	if (exit != SQLITE_OK) {
@@ -143,6 +144,18 @@ int createRecord(sqlite3 * db, char * msg)
 	}
 	else
         fprintf(stdout, "Record created Successfully!\n");
+
+    free(sql_query);
+    free(buffer_age);
+    free(buffer_gross);
+    free(buffer_id);
+    free(buffer_leave);
+    free(buffer_med_all);
+    free(buffer_net);
+    free(buffer_pf);
+    free(buffer_salary);
+    free(buffer_tax);
+    free(buffer_travel_all);
     return 0;
 }
 
@@ -216,4 +229,28 @@ int searchId(sqlite3 * db, char * msg)
 	sprintf(query, "%s%s';",sql, buffer);
 	sqlite3_exec(db, query, callback, NULL, NULL);
 	return 0;
+}
+
+int markAttendance(sqlite3 * db,char * msg)
+{
+    int i;
+    printf("Enter id of absent employee: ");
+    scanf("%d", &i);
+    char * sql = "UPDATE PERSON SET LEAVE = LEAVE + 1 WHERE ID = ";
+    char * buffer;
+    buffer = (char*)malloc(4);
+    sprintf(buffer,"%d",i);
+    char * query;
+    query = (char*)malloc(strlen(sql)+strlen(buffer));
+    sprintf(query, "%s%s;", sql, buffer);
+    int exit = sqlite3_exec(db, query, NULL, NULL, &msg);
+    if( exit != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", msg);
+        sqlite3_free(msg);
+    } else {
+        fprintf(stdout, "Operation done successfully\n");
+    }
+    free(query);
+    free(buffer);
+    return 0;
 }
