@@ -9,7 +9,7 @@ static int callback2(void* data, int argc, char** argv, char** azColName)
     return 0;
 }
 
-int main(int argc, char** argv)
+int main(int argc,char** argv)
 {
 	sqlite3* DB;
 	int input;
@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 	sqlite3_exec(DB, "SELECT MAX(ID) FROM PERSON;", callback2, NULL, NULL); //To get Latest ID
 	while(1)
     {
-        printf("Press 1 to display records\nPress 2 to add employee\nPress 3 to delete record\nPress 4 to search by name\nPress 5 to search by id\nPress 6 to mark attendance\nPress 0 to exit\n");
+        printf("Press 1 to display records\nPress 2 to add employee\nPress 3 to delete record\nPress 4 to search by name\nPress 5 to search by id\nPress 6 to mark attendance\nPress 7 to enter hours overworked\nPress 8 to update salary\nPress 0 to exit\n");
         scanf("%d",&input);
         switch(input)
         {
@@ -40,12 +40,19 @@ int main(int argc, char** argv)
 
             case 6: markAttendance(DB, messaggeError);
                 break;
+
+            case 7: hoursOverworked(DB, messaggeError);
+                break;
+
+
+            case 8: updateBase(DB, messaggeError);
+                break;
             default : break;
         }
         if(input==0)
             break;
+
     }
-	return (0);
 }
 	/*char * sql = "CREATE TABLE PERSON("
                       "ID INT PRIMARY KEY     NOT NULL, "

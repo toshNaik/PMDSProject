@@ -10,8 +10,9 @@ void validSalary(float * salary);               //Check if salary falls within v
 void valid_pf(float * salary, float* pf);       //Check if pf falls within valid range
 void valid_allowance(float * allowance);        //Check if allowance falls within valid range
 int markAttendance(sqlite3 * db,char * msg);    //Mark daily attendance of employees
-float tax(float * salary);                      //Calculate tax levied on salary
-
+float tax(float * salary);
+void updateBase(sqlite3* db, char * msg);                      //Calculate tax levied on salary
+//int deductFromSalary(void* data, int argc, char** argv, char** azColName);
 
 #endif // EMPLOYEE_H_INCLUDED
 //static int callback(void* data, int argc, char** argv, char** azColName);

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <C:\Users\Naik\Desktop\c_assignment\EmployeeDB\sqlite3.h>
+#include "sqlite3.h"
 #include "employee.h"
 int id;
 
@@ -222,7 +222,7 @@ int searchId(sqlite3 * db, char * msg)
 	char* buffer;
 	buffer = (char*)malloc(4);
 	printf("Enter id: ");
-	fflush(stdin);               //Select * From PERSON where NAME like '%NAIK%';
+	fflush(stdin);
 	scanf("%d", &id);
 	sprintf(buffer, "%d", id);
 	query = (char*)malloc(strlen(sql)+strlen(buffer)+4);
@@ -253,4 +253,67 @@ int markAttendance(sqlite3 * db,char * msg)
     free(query);
     free(buffer);
     return 0;
+}
+
+int hoursOverworked(sqlite3 * db,char * msg)
+{
+    int hours;
+    int i;
+    printf("Enter id of employee who has overworked: ");
+    scanf("%d", &i);
+    char* buffer_id = (char*)malloc(4);
+    sprintf(buffer_id, "%d", i);
+
+    printf("Enter hours over-worked: ");
+    scanf("%d", &hours);
+    char* buffer_hours = (char*)malloc(4);
+    sprintf(buffer_hours, "%d", hours);
+
+    char * sql = "UPDATE PERSON SET NET = NET + 500*";
+    char * append = " WHERE ID = ";
+    char* query = (char*)malloc(strlen(sql)+strlen(append)+strlen(buffer_hours)+strlen(buffer_id)+4);
+    sprintf(query, "%s%s%s%s;", sql,buffer_hours,append,buffer_id);
+    int exit = sqlite3_exec(db, query, NULL, NULL, &msg);
+    if( exit != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", msg);
+        sqlite3_free(msg);
+    } else {
+        fprintf(stdout, "Operation done successfully\n");
+    }
+    free(query);
+    free(buffer_hours);
+    free(buffer_id);
+    return 0;
+}
+
+void updateBase(sqlite3* db, char * msg)
+{
+    int i;
+    float salary;
+    printf("Enter id of employee whose base is to be updated: ");
+    scanf("%d", &i);
+    char* buffer_id = (char*)malloc(4);
+    sprintf(buffer_id, "%d", i);
+    //printf("%s\n", buffer_id);
+
+
+    printf("Enter new base salary: ");
+    scanf("%f", &salary);
+    validSalary(&salary);
+    char* buffer_salary = (char*)malloc(10);
+    sprintf(buffer_salary, "%f", salary);
+
+    char * query = (char*)malloc(sizeof(buffer_id)+sizeof(buffer_salary)+50);
+    sprintf(query, "UPDATE PERSON SET SALARY = %s WHERE ID = %s;", buffer_salary, buffer_id);
+    int exit;
+	exit = sqlite3_exec(db, query, NULL, 0, &msg);
+    if( exit != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", msg);
+        sqlite3_free(msg);
+    } else {
+        fprintf(stdout, "Operation done successfully\n");
+    }
+    free(query);
+    free(buffer_id);
+    free(buffer_salary);
 }
